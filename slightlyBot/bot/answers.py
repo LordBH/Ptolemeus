@@ -1,6 +1,11 @@
-from commands import Commands
-from methods import *
-from mind import *
+from commands import CommandManager, easy_asnwer
+from methods import chat_postMessage
+from constants import DELAY_FOR_NEXT_ANSWER
+import time
+
+
+# delay for nexxt answer if call without `@bot-name`
+last_answer = time.time()
 
 
 def disassemble_msg(msg_info):
@@ -8,7 +13,7 @@ def disassemble_msg(msg_info):
 
 
 def find_command(msg):
-    command = Commands(msg)
+    command = CommandManager(msg)
     command._find()
     return command
 
@@ -17,15 +22,23 @@ def run_command(command):
     return command.do_cmd()
 
 
-def handle_message(msg_info):
-    channel, user, text = disassemble_msg(msg_info)
-    print user
-    command = find_command(text)
-    if command.exist:
-        text = command.do_cmd()
-    else:
-        text = MIND['random_answer']()
+def enabled_answer():
+    # check for case when answer are permited
+    global last_answer
+    if time.time() - last_answer > DELAY_FOR_NEXT_ANSWER:
+        last_answer = time.time()
+        return True
+    return False
 
+
+def handle_message(msg_info):
+    # getting info from `rtm_read`
+    channel, user, text = disassemble_msg(msg_info)
+    if user == 'USLACKBOT':
+        slackbot_answered = True
+    else:
+        slackbot_answered = True
+    # dict for response to `api_call`
     data = dict(
         channel=channel,
         text=text,
@@ -34,12 +47,24 @@ def handle_message(msg_info):
         username='Ptolemeus',
         icon_emoji=':grinning:',
     )
-
+    # finding the command
+    command = find_command(text)
+    if command.exist:
+        # if command was found
+        command.do_cmd(data=data)
+    else:
+        if enabled_answer():
+            # If tine delay was passed
+            easy_asnwer(data, bot=slackbot_answered)
+        else:
+            # Answer without delay, it means bot will say always this
+            return None
     return data
 
 
 def ideas(extra, mode='message'):
     if mode == 'message':
         if extra.get('user') is not None:
+            print extra.get('user')
             return handle_message(extra)
 

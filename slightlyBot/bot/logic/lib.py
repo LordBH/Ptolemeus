@@ -1,21 +1,25 @@
-from constants import USERS, EMOJI, logger
-from reply import COMMAND_NOT_EXIST
+from bot._log import logger
 import random
 import string
 
 
 
+COMMAND_NOT_EXIST = [
+    'May itself this command',
+    'Don\'t do it',
+    'I\'ll think about that :) but i poor for this info',
+]
+
+
 def _exit(*args, **kwargs):
-    logger
+    logger.info("Exit API")
     exit()
 
 
 def answer_to_slack_bot(*args, **kwargs):
-    postMessage['text'] = "Smart ass !"
-    postMessage['channel'] = kwargs['channel']
-    postMessage['as_emoji'] = emoji()
-
-    return postMessage
+    data = kwargs['data']
+    data['text'] = "Smart ass !"
+    data['as_emoji'] = emoji()
 
 
 def create_random_token(*args, **kwargs):
@@ -28,10 +32,12 @@ def create_random_token(*args, **kwargs):
 
 
 def emoji(*args, **kwargs):
+    print CHANNELS, USERS, EMOJI
     return EMOJI['trollface']
 
 
 def dreaming(*args, **kwargs):
+    logger.info("Goind sleep for 1 hour")
     time.sleep(3600)
 
 

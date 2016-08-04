@@ -1,8 +1,7 @@
-import lib
-from mind import MIND
+from logic.mind import MIND
 
 
-class Commands:
+class CommandManager:
 
     cmds = set(MIND.keys())
 
@@ -44,5 +43,14 @@ class Commands:
                 self.exist = True
 
 
-    def do_cmd(self):
-        return self.func(self.msg)
+    def do_cmd(self, data=None):
+        return self.func(msg=self.msg, data=data)
+
+
+def easy_asnwer(data, bot=False):
+    if bot:
+        # for answer to slack bot
+        MIND['answer_to_slack_bot'](data=data)
+    else:
+        # if delay_for_next_answer was pass
+        MIND['random_answer'](data=data)

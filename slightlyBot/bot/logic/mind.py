@@ -1,7 +1,7 @@
 import lib
 
 
-# Bot will resond on this commands
+# Bot will respond on this commands
 MIND = {
     'answer_to_slack_bot': lib.answer_to_slack_bot,
     'off': lib._exit,
